@@ -2,6 +2,10 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using AutenticationAPI.Data;
+using Microsoft.Extensions.DependencyInjection;
+using MongoDB.Bson;
+
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -10,16 +14,19 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddSingleton<IMongoDBClient, MongoDBClient>();
+builder.Services.AddTransient<DataRepository>();
+
 
 var app = builder.Build();
 
 //Comprobar que se conecta la base de datos
-Console.WriteLine("Starting MongoDB connection test...");
-
-// Llama al método Conectar de la clase MongoDBConexion
-MongoDBConexion.Conectar();
-
-Console.WriteLine("Finished MongoDB connection test.");
+// using (var scope = app.Services.CreateScope())
+// {
+//     var servicios = scope.ServiceProvider;
+//     var otroServicio = servicios.GetRequiredService<DataRepository>();
+//     otroServicio.GetAllUsers();
+// }
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
